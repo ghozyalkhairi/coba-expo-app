@@ -1,74 +1,117 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from "react";
+import {
+  Button,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const data = [{ isi: "Catatan Saya" }, { isi: "Catatan Lama" }];
 
 export default function HomeScreen() {
+  const [listCatatan, setListCatatan] = useState(data);
+
+  const [newCatatan, setNewCatatan] = useState("");
+
+  const tambahCatatan = (catatanBaru: { isi: string }) => {
+    setListCatatan([...listCatatan, catatanBaru]);
+  };
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      <Text style={styles.header}>Aplikasi CatatanKu</Text>
+
+      <View style={styles.formContainer}>
+        <Text style={styles.formTitle}>Tambah Catatan</Text>
+        <TextInput
+          placeholder="Isi catatan..."
+          style={styles.input}
+          placeholderTextColor="#999"
+          value={newCatatan}
+          onChangeText={(text) => setNewCatatan(text)}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Button
+          title="Simpan"
+          onPress={() => tambahCatatan({ isi: newCatatan })}
+        />
+      </View>
+
+      <Text style={styles.sectionTitle}>Daftar Catatan</Text>
+      <FlatList
+        data={listCatatan}
+        keyExtractor={(item) => item.isi}
+        renderItem={({ item }) => (
+          <View style={styles.noteItem}>
+            <Text style={styles.noteText}>{item.isi}</Text>
+          </View>
+        )}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: "#f7f8fc",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+    marginVertical: 24,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  formContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: 24,
+  },
+  formTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
+    color: "#333",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    color: "#333",
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#444",
+    marginBottom: 12,
+  },
+  listContainer: {
+    paddingBottom: 24,
+  },
+  noteItem: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  noteText: {
+    fontSize: 16,
+    color: "#333",
   },
 });
